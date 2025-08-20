@@ -1,5 +1,5 @@
 
-# Caramelo
+# Lectio
 
 Rede social voltada para leitores, desenvolvida como projeto acadêmico para a disciplina C14.
 
@@ -11,7 +11,7 @@ Rede social voltada para leitores, desenvolvida como projeto acadêmico para a d
 Para executar este projeto rode este comando
 
 ```bash
-  git clone https://github.com/VitorAu/caramelo.git
+  git clone https://github.com/VitorAu/lectio.git
 ```
 
 ```bash
