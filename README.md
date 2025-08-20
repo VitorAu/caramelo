@@ -1,7 +1,7 @@
 
 # Caramelo
 
-Uma rede social para leitores, desenvolvida como projeto para a matéria C14.
+Uma rede social voltada para leitores, desenvolvida como projeto acadêmico para a disciplina C14.
 
 
 
