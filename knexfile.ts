@@ -4,11 +4,11 @@ const config: { [key: string]: Knex.Config } = {
   development: {
     client: "pg",
     connection: {
-      host: "localhost",
-      port: 5432,
-      user: "lectio",
-      password: "ovCjWA23OBSU4pgQ1zhY",
-      database: "lectio",
+      host: process.env.DB_HOST || "localhost",
+      port: Number(process.env.DB_PORT) || 5432,
+      user: process.env.DB_USER || "lectio",
+      password: process.env.DB_PASSWORD || "",
+      database: process.env.DB_NAME || "lectio",
     },
     migrations: {
       directory: "./src/database/migrations",
@@ -16,5 +16,6 @@ const config: { [key: string]: Knex.Config } = {
     },
   },
 };
+
 
 export default config;

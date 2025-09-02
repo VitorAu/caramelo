@@ -17,7 +17,7 @@ const server = fastify({
 });
 
 server.register(fastifyJwt, {
-  secret: "secret",
+  secret: process.env.JWT_SECRET || "secret",
 });
 
 server.register(AuthRoutes, { prefix: "v1" });
