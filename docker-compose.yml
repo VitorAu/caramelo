@@ -1,0 +1,10 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: lectio_postgres
+    environment:
+      POSTGRES_PASSWORD: "ovCjWA23OBSU4pgQ1zhY"
+      POSTGRES_USER: "lectio"
+      POSTGRES_DB: "lectio"
+    ports:
+      - "5432:5432"
