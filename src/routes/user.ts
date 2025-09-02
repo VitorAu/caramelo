@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import type { IUser } from "../interfaces/user.ts";
 import { UserModel } from "../models/user.ts";
+import { jwtAuth } from "../services/jwtAuth.ts";
 
 export async function UserRoutes(fastify: FastifyInstance) {
   fastify.post("/users", async (req, res) => {
@@ -36,7 +37,7 @@ export async function UserRoutes(fastify: FastifyInstance) {
     }
   });
 
-  fastify.get("/users", async (req, res) => {
+  fastify.get("/users", { preHandler: jwtAuth }, async (req, res) => {
     try {
       const response = await UserModel.findAll();
       return res.status(200).send({ success: true, data: response });
@@ -47,7 +48,18 @@ export async function UserRoutes(fastify: FastifyInstance) {
     }
   });
 
-  fastify.get("/users/:id", async (req, res) => {
+  fastify.get("/users/me", { preHandler: jwtAuth }, async (req, res) => {
+    try {
+      return res.status(200).send({ success: true, data: req.user });
+    } catch (err) {
+      return res.status(500).send({
+        success: false,
+        error: "Server error: " + err,
+      });
+    }
+  });
+
+  fastify.get("/users/:id", { preHandler: jwtAuth }, async (req, res) => {
     interface ParamsType {
       id: string;
     }
@@ -73,7 +85,7 @@ export async function UserRoutes(fastify: FastifyInstance) {
     }
   });
 
-  fastify.patch("/users/:id", async (req, res) => {
+  fastify.patch("/users/:id", { preHandler: jwtAuth }, async (req, res) => {
     interface DataType {
       name: string;
       username: string;
@@ -114,41 +126,45 @@ export async function UserRoutes(fastify: FastifyInstance) {
     }
   });
 
-  fastify.put("/users/:id/password", async (req, res) => {
-    interface DataType {
-      password: string;
-    }
+  fastify.put(
+    "/users/:id/password",
+    { preHandler: jwtAuth },
+    async (req, res) => {
+      interface DataType {
+        password: string;
+      }
 
-    interface ParamsType {
-      id: string;
-    }
+      interface ParamsType {
+        id: string;
+      }
 
-    const data = req.body as DataType;
-    const params = req.params as ParamsType;
-    if (!data.password) {
-      return res.status(400).send({
-        success: false,
-        error: "Missing required fields",
-      });
-    }
+      const data = req.body as DataType;
+      const params = req.params as ParamsType;
+      if (!data.password) {
+        return res.status(400).send({
+          success: false,
+          error: "Missing required fields",
+        });
+      }
 
-    if (!params.id) {
-      return res.status(400).send({
-        success: false,
-        message: "Missing user id",
-      });
-    }
+      if (!params.id) {
+        return res.status(400).send({
+          success: false,
+          message: "Missing user id",
+        });
+      }
 
-    try {
-      const response = await UserModel.patch(params.id, data);
-      return res.status(200).send({
-        success: true,
-        data: response,
-      });
-    } catch (err) {
-      return res
-        .status(500)
-        .send({ success: false, error: "Server error: " + err });
+      try {
+        const response = await UserModel.patch(params.id, data);
+        return res.status(200).send({
+          success: true,
+          data: response,
+        });
+      } catch (err) {
+        return res
+          .status(500)
+          .send({ success: false, error: "Server error: " + err });
+      }
     }
-  });
+  );
 }

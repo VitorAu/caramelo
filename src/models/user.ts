@@ -29,7 +29,7 @@ export class UserModel {
 
   static async patch(id: string, data: Partial<IUser>) {
     try {
-      if (data.password) bcrypt.hash(data.password, 10);
+      if (data.password) data.password = await bcrypt.hash(data.password, 10);
       const [updatedUser] = await database<IUser>("users")
         .where({ id })
         .update(data)
