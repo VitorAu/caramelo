@@ -1,28 +1,17 @@
-import { UserRoutes } from "./routes/user.ts";
-import { AuthRoutes } from "./routes/auth.ts";
-import fastify from "fastify";
-import fastifyJwt from "@fastify/jwt";
+import { buildApp } from "./app.ts";
 
-const port = Number(process.env.SERVER_PORT) || 3000;
-const server = fastify({
-  logger: {
-    transport: {
-      target: "pino-pretty",
-      options: {
-        colorize: true,
-        ignore: "pid, hostname",
-      },
-    },
-  },
-});
+export async function initializeServer() {
+  const port = Number(process.env.SERVER_PORT) || 3000;
+  const app = await buildApp();
 
-server.register(fastifyJwt, {
-  secret: process.env.JWT_SECRET || "secret",
-});
+  try {
+    await app.listen({ port: port }).then(() => {
+      app.log.info("🚀 HTTP server is running");
+    });
+  } catch (err) {
+    app.log.error(err);
+    process.exit(1);
+  }
+}
 
-server.register(AuthRoutes, { prefix: "v1" });
-server.register(UserRoutes, { prefix: "v1" });
-
-server.listen({ port: port }).then(() => {
-  server.log.info("🚀 HTTP server is running");
-});
+initializeServer();

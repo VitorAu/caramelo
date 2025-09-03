@@ -13,7 +13,7 @@ export class AuthModel {
     try {
       const user = await database<IUser>("users").where({ email }).first();
       if (!user) throw new Error("Invalid email");
-      const isPasswordValid = bcrypt.compare(password, user.password);
+      const isPasswordValid = await bcrypt.compare(password, user.password);
       if (!isPasswordValid) throw new Error("Invalid password");
 
       const accessToken = fastify.jwt.sign(
